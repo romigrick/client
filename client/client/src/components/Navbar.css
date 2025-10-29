@@ -1,0 +1,27 @@
+
+.app-navbar {
+  background-color: #222;
+  padding: 0.5rem 2rem;
+}
+
+.app-navbar ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: space-around; /* Distribute items evenly */
+}
+
+.app-navbar li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  display: block;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.app-navbar li a:hover {
+  background-color: #444;
+}

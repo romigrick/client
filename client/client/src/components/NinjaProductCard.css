@@ -1,0 +1,139 @@
+
+.ninja-product-card {
+  flex-shrink: 0;
+  width: 256px; /* w-64 */
+  background-color: white;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+  padding: 1rem; /* p-4 */
+  margin: 0.5rem; /* m-2 */
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+  color: #1f2937; /* gray-800 */
+}
+
+.ninja-product-card:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* hover:shadow-xl */
+}
+
+/* Re-using some styles from ProductCard.css for consistency */
+.product-image-container {
+  position: relative;
+}
+
+.product-image {
+  width: 100%;
+  height: 10rem; /* h-40 */
+  object-fit: contain;
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.product-title {
+  font-size: 0.875rem; /* text-sm */
+  color: #374151; /* text-gray-700 */
+  height: 5rem; /* h-20 */
+  overflow: hidden;
+  margin-top: 0.5rem; /* mt-2 */
+}
+
+.product-pricing {
+  margin-top: 1rem; /* mt-4 */
+}
+
+.old-price {
+  font-size: 0.75rem; /* text-xs */
+  color: #6b7280; /* text-gray-500 */
+  text-decoration: line-through;
+}
+
+.new-price-container {
+  display: flex;
+  align-items: center;
+}
+
+.new-price {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  color: #dc2626; /* text-red-600 */
+}
+
+.pix-info {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+}
+
+.installments {
+  font-size: 0.75rem; /* text-xs */
+  color: #4b5563; /* text-gray-600 */
+  margin-top: 0.25rem; /* mt-1 */
+}
+
+/* Specific Ninja Card Styles */
+.coupon-tag {
+  position: absolute;
+  top: -0.5rem;
+  left: -0.5rem;
+  background-color: #facc15; /* bg-yellow-400 */
+  color: black;
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700; /* font-bold */
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem; /* rounded-md */
+  z-index: 10;
+}
+
+.stock-tag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #f3f4f6; /* bg-gray-100 */
+  color: #dc2626; /* text-red-600 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700; /* font-bold */
+  padding: 0.25rem 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.shipping-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #1f2937; /* bg-gray-800 */
+  color: white;
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700; /* font-bold */
+  padding: 0.25rem 0.5rem;
+  border-top-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.shipping-tag .pi {
+  margin-right: 0.25rem;
+  font-size: 0.875rem; /* 14px */
+}
+
+.discount-tag {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 700; /* font-bold */
+  color: #dc2626; /* text-red-600 */
+  background-color: #fee2e2; /* bg-red-100 */
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem; /* rounded-md */
+  margin-left: 0.5rem;
+}
+
+.ninja-footer {
+  margin-top: 0.75rem; /* mt-3 */
+  padding-top: 0.75rem; /* pt-3 */
+  border-top: 1px solid #e5e7eb; /* border-t border-gray-200 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+.prime-ninja-logo {
+  height: 1.25rem; /* h-5 */
+}
