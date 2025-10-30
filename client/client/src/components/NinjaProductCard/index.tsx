@@ -1,7 +1,7 @@
 
 import React from 'react';
-import CountdownTimer from './CountdownTimer';
-import './NinjaProductCard.css';
+import CountdownTimer from '../CountdownTimer/index';
+import './index.css';
 
 const NinjaProductCard = ({ product }) => {
   const calculateDiscount = (oldPrice, newPrice) => {

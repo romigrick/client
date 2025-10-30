@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import './CountdownTimer.css';
+import './index.css';
 
 const CountdownTimer = ({ compact = false }) => {
   const calculateTimeLeft = () => {

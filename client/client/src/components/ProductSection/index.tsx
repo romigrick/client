@@ -1,5 +1,5 @@
 import React from 'react';
-import './ProductSection.css';
+import './index.css';
 
 const ProductSection = () => {
   return (

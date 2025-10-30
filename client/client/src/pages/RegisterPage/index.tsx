@@ -10,7 +10,7 @@ import { useRef, useState } from "react";
 import type { IUserRegister } from "@/commons/types";
 import AuthService from "@/services/authService";
 import { Toast } from "primereact/toast";
-import './forms.css';
+import './index.css';
 
 export const RegisterPage = () => {
   const {

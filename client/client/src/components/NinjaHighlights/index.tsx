@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { ninjaProducts } from '../data/mockData';
-import NinjaProductCard from './NinjaProductCard';
-import './NinjaHighlights.css';
+import { ninjaProducts } from '../../data/mockData';
+import NinjaProductCard from '../NinjaProductCard/index';
+import './index.css';
 
 const NinjaHighlights = () => {
   const categories = [

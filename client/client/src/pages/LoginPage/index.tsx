@@ -10,7 +10,7 @@ import type { AuthenticationResponse, IUserLogin } from "@/commons/types";
 import { useAuth } from "@/context/hooks/use-auth";
 import AuthService from "@/services/authService";
 import { Toast } from "primereact/toast";
-import './forms.css';
+import './index.css';
 
 export const LoginPage = () => {
   const {

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { recommendedBrands } from '../data/mockData';
-import './RecommendedBrands.css';
+import { recommendedBrands } from '../../data/mockData';
+import './index.css';
 
 const RecommendedBrands = () => {
   return (

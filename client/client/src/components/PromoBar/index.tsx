@@ -1,7 +1,7 @@
 
 import React from 'react';
-import CountdownTimer from './CountdownTimer';
-import './PromoBar.css';
+import CountdownTimer from '../CountdownTimer/index';
+import './index.css';
 
 const PromoBar = () => {
   return (

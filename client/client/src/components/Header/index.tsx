@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/hooks/use-auth';
 // import { Menu } from 'primereact/menu'; // Temporarily removed for debugging
 import { Button } from 'primereact/button';
-import './Header.css';
+import './index.css';
 import logoImage from '@/assets/katchau_logo.png';
 
 const Header = () => {

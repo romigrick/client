@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import './Footer.css';
+import './index.css';
 import logoImage from '@/assets/katchau_logo.png';
 
 

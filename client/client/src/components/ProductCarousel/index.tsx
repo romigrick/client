@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { mockProducts } from '../data/mockData';
-import ProductCard from './ProductCard';
-import './ProductCarousel.css';
+import { mockProducts } from '../../data/mockData';
+import ProductCard from '../ProductCard/index';
+import './index.css';
 
 const ProductCarousel = () => {
   // Em uma aplicação real, o scroll seria controlado por JS
