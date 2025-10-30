@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import './Footer.css';
+import logoImage from '@/assets/katchau_logo.png';
+
 
 const Footer = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -56,7 +58,7 @@ const Footer = () => {
               <li>08:00 às 20:00 - Segunda a Sexta</li>
               <li>08:00 às 15:00 - Sábado, horário de Brasília (exceto Domingo e feriados).</li>
               <li className="pt-2">Fale conosco via <a href="#" className="footer-link-highlight">chat</a> ou pelo email:</li>
-              <li>vendas@kabum.com.br</li>
+              <li>vendas@Katchau.com.br</li>
             </ul>
           </div>
 
@@ -73,7 +75,7 @@ const Footer = () => {
           <div className="footer-column">
             <h4 className="footer-title">Institucional</h4>
             <div className="institutional-links">
-              <a href="#" className="footer-link">Sobre o KaBuM!</a>
+              <a href="#" className="footer-link">Sobre o Katchau!</a>
               <a href="#" className="footer-link">Políticas de Cookies</a>
               {/* ... other links */}
             </div>
@@ -119,14 +121,9 @@ const Footer = () => {
       {/* Faixa Inferior */}
       <div className="footer-bottom-bar">
         <div className="footer-bottom-content">
-          <img 
-            src="https://placehold.co/150x40/FFFFFF/003399?text=KaBuM!+Logo" 
-            alt="KaBuM!"
-            className="footer-logo"
-          />
-          <p>Uma empresa do grupo <span className="magalu-text">Magalu</span></p>
-          <p>Rua Carlos Gomes, 1321 - 9º andar - Centro, Limeira/SP - CEP 13480-013 | KaBuM! S.A | CNPJ: 05.570.714/0001-59 | Todos os direitos reservados.</p>
-          <p>Os preços anunciados neste site ou via e-mail promocional podem ser alterados sem prévio aviso. O KaBuM! não se responsabiliza por erros descritivos. As fotos contidas nesta página são meramente ilustrativas do produto e podem variar de acordo com o fornecedor/lote do fabricante. Este site trabalha 100% em criptografia SSL. <a href="#" className="footer-link-highlight">Clique aqui</a> e veja as políticas de nossa empresa.</p>
+          <img src={logoImage} alt="Katchau Logo" className="footer-logo" />
+          <p>Uma empresa do grupo <span className="magalu-text">Inside Studio</span></p>
+          <p>Rua Doutor Francisco Beltrão, 360 - AP 112 - Santa Terezinha, Pato Branco/PR - CEP 85501-190 | Inside Studio | Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

@@ -7,7 +7,7 @@ const Newsletter = () => {
     <section className="newsletter-section">
       <div className="newsletter-container">
         <div className="newsletter-text">
-          <h3 className="newsletter-title">KaBuM! News</h3>
+          <h3 className="newsletter-title">Katchau News</h3>
           <p className="newsletter-subtitle">Receba ofertas exclusivas no seu e-mail</p>
         </div>
         <form className="newsletter-form">

@@ -16,7 +16,7 @@ const Header = () => {
       return (
         <div className="login-desktop">
           <span style={{marginRight: '1rem'}}>Olá, {authenticatedUser?.displayName}</span>
-          <button onClick={() => { handleLogout(); navigate('/login'); }} className="p-button p-button-sm p-button-danger">Sair</button>
+          <button onClick={() => { handleLogout(); }} className="p-button p-button-sm p-button-danger">Sair</button>
         </div>
       );
     } else {
@@ -46,13 +46,6 @@ const Header = () => {
           </div>
 
           <div className="header-center">
-            <div className="search-bar-wrapper">
-              <input type="text" placeholder="Busque no KaBuM!" className="search-input" />
-              <button className="search-button"><i className="pi pi-search" /></button>
-            </div>
-          </div>
-
-          <div className="header-right">
             <div className="send-to-desktop">
               <i className="pi pi-map-marker" />
               <div className="send-to-text">
@@ -60,13 +53,20 @@ const Header = () => {
                 <div className="font-bold">Digite o CEP</div>
               </div>
             </div>
-            <AuthDisplay />
+            <div className="search-bar-wrapper">
+              <input type="text" placeholder="Busque no Katchau!" className="search-input" />
+              <button className="search-button"><i className="pi pi-search" /></button>
+            </div>
+          </div>
+
+          <div className="header-right">
             <div className="actions-desktop">
               <a href="#" className="action-icon"><i className="pi pi-star" /></a>
               <a href="#" className="action-icon"><i className="pi pi-bell" /></a>
               <a href="#" className="action-icon"><i className="pi pi-heart" /></a>
               <a href="#" className="action-icon cart-icon"><i className="pi pi-shopping-cart" /></a>
             </div>
+            <AuthDisplay />
           </div>
 
           <div className="cart-mobile">
@@ -98,13 +98,23 @@ const Header = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mobile-menu-header">
-            <div className="mobile-login">
-              <i className="pi pi-user" />
-              <div className="login-text">
-                <div>Entre ou</div>
-                <div className="font-bold">Cadastre-se</div>
+            {authenticated ? (
+              <div className="mobile-login">
+                <i className="pi pi-user" />
+                <div className="login-text">
+                  <div>Olá,</div>
+                  <div className="font-bold">{authenticatedUser?.displayName}</div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <Link to="/login" className="mobile-login" onClick={() => setMobileMenuOpen(false)}>
+                <i className="pi pi-user" />
+                <div className="login-text">
+                  <div>Entre ou</div>
+                  <div className="font-bold">Cadastre-se</div>
+                </div>
+              </Link>
+            )}
             <button onClick={() => setMobileMenuOpen(false)} className="close-button">
               <i className="pi pi-times" />
             </button>
@@ -129,6 +139,11 @@ const Header = () => {
           <div className="mobile-actions">
             <a href="#" className="mobile-action-icon"><i className="pi pi-bell" /></a>
             <a href="#" className="mobile-action-icon"><i className="pi pi-heart" /></a>
+            {authenticated && (
+              <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); setMobileMenuOpen(false); }} className="mobile-action-icon">
+                <i className="pi pi-sign-out" />
+              </a>
+            )}
           </div>
         </div>
       </div>

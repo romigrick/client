@@ -40,7 +40,9 @@
 /* --- Desktop Styles --- */
 @media (min-width: 1024px) {
   .header-center {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     flex-grow: 1;
     min-width: 0;
     margin: 0 1.5rem;
@@ -120,6 +122,7 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  min-width: 110px;
 }
 
 .login-desktop {
