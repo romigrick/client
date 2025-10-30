@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import './index.css';
 
 const CountdownTimer = ({ compact = false }) => {
   const calculateTimeLeft = () => {
@@ -36,8 +35,8 @@ const CountdownTimer = ({ compact = false }) => {
 
   if (compact) {
     return (
-      <div className="countdown-compact">
-        <i className="pi pi-bolt"></i>
+      <div className="flex align-items-center gap-1 text-orange-500 font-bold text-sm">
+        <i className="pi pi-bolt text-base"></i>
         <span>TERMINA EM:</span>
         <span>{formatTime(timeLeft.dias)}D :</span>
         <span>{formatTime(timeLeft.horas)} :</span>
@@ -48,15 +47,15 @@ const CountdownTimer = ({ compact = false }) => {
   }
 
   return (
-    <div className="countdown-default">
-      <span className="countdown-label">TERMINA EM:</span>
-      <div className="countdown-timer-boxes">
-        <span className="timer-box">{formatTime(timeLeft.dias)}D</span>
-        <span className="timer-box">{formatTime(timeLeft.horas)}</span>
-        <span className="timer-separator">:</span>
-        <span className="timer-box">{formatTime(timeLeft.minutos)}</span>
-        <span className="timer-separator">:</span>
-        <span className="timer-box">{formatTime(timeLeft.segundos)}</span>
+    <div className="flex align-items-center gap-2">
+      <span className="text-sm font-medium text-gray-800">TERMINA EM:</span>
+      <div className="flex gap-1 text-lg font-bold">
+        <span className="bg-white text-orange-500 p-1 px-2 border-round-md">{formatTime(timeLeft.dias)}D</span>
+        <span className="bg-white text-orange-500 p-1 px-2 border-round-md">{formatTime(timeLeft.horas)}</span>
+        <span className="text-white">:</span>
+        <span className="bg-white text-orange-500 p-1 px-2 border-round-md">{formatTime(timeLeft.minutos)}</span>
+        <span className="text-white">:</span>
+        <span className="bg-white text-orange-500 p-1 px-2 border-round-md">{formatTime(timeLeft.segundos)}</span>
       </div>
     </div>
   );

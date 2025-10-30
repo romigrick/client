@@ -1,28 +1,32 @@
 
 import React from 'react';
-import './index.css';
 
 const Hero = () => {
   return (
-    <section className="hero-container">
+    <section className="my-4 flex flex-column md:flex-row gap-4">
       {/* Banner % OFF */}
-      <div className="hero-banner-left">
+      <div className="w-full md:w-3">
         <img 
           src="https://placehold.co/300x410/ff6600/ffffff?text=%25+OFF+NO+PIX" 
           alt="Banner de Ofertas % OFF"
-          className="hero-image"
+          className="border-round-lg w-full h-full"
+          style={{objectFit: 'cover'}}
         />
       </div>
       
       {/* Banner Festival de Cupons */}
-      <div className="hero-banner-right">
+      <div className="w-full md:w-9 relative">
         <img 
           src="https://placehold.co/850x410/003399/FFFFFF?text=FESTIVAL+DE+CUPONS" 
           alt="Banner Festival de Cupons"
-          className="hero-image"
+          className="border-round-lg w-full h-full"
+          style={{objectFit: 'cover'}}
         />
-        <div className="app-exclusive-tag">
-          <i className="pi pi-mobile"></i>
+        <div 
+          className="absolute bg-yellow-400 text-blue-900 py-1 px-3 border-circle text-sm font-bold flex align-items-center"
+          style={{top: '1rem', left: '1rem'}}
+        >
+          <i className="pi pi-mobile mr-1"></i>
           Exclusivo no APP
         </div>
       </div>
