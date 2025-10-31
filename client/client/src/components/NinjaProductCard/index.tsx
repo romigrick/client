@@ -1,64 +1,53 @@
-
-
 import CountdownTimer from '../CountdownTimer/index';
+import type { IProduct } from '../../commons/types';
 
-interface Product {
-  id: string;
-  title: string;
-  imgSrc: string;
-  oldPrice: string;
-  newPrice: string;
-  coupon?: string;
-  restam?: number;
-  freeShipping?: boolean;
-  installments: string;
-  ninja?: boolean;
-}
-
-const NinjaProductCard = ({ product }: { product: Product }) => {
-  const calculateDiscount = (oldPrice: string, newPrice: string): number => {
-    const oldP = parseFloat(oldPrice.replace(/[^0-9,-]+/g, '').replace(',', '.'));
-    const newP = parseFloat(newPrice.replace(/[^0-9,-]+/g, '').replace(',', '.'));
-    if (isNaN(oldP) || isNaN(newP) || oldP === 0) return 0;
-    return Math.round(((oldP - newP) / oldP) * 100);
+const NinjaProductCard = ({ product }: { product: IProduct }) => {
+  const calculateDiscount = (oldPrice: number, newPrice: number): number => {
+    if (oldPrice === 0) return 0;
+    return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
   };
 
-  const discount = calculateDiscount(product.oldPrice, product.newPrice);
+  const discount = calculateDiscount(product.price, product.price); // Assuming no old price in IProduct, using same price
+
+  // Função para formatar preço
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
+
+  // URL da imagem do produto
+  const imageUrl = product.urlImagem || 'https://placehold.co/250x250/eee/333?text=Produto';
 
   return (
     <div className="ninja-product-card">
       <div className="ninja-product-image-container">
-        {product.coupon && (
-          <span className="ninja-coupon-tag">
-            {product.coupon}
-          </span>
-        )}
+        <span className="ninja-coupon-tag">
+          CUPOM SUPERTERCA
+        </span>
         <img
-          src={product.imgSrc}
-          alt={product.title}
+          src={imageUrl}
+          alt={product.name}
           className="ninja-product-image"
         />
-        {product.restam && product.restam > 0 && (
-          <span className="ninja-stock-tag">
-            Restam {product.restam} unid.
-          </span>
-        )}
-        {product.freeShipping && (
-          <span className="ninja-shipping-tag">
-            <i className="pi pi-truck"></i>
-            Frete grátis
-          </span>
-        )}
+        <span className="ninja-stock-tag">
+          Restam 5 unid.
+        </span>
+        <span className="ninja-shipping-tag">
+          <i className="pi pi-truck"></i>
+          Frete grátis
+        </span>
       </div>
 
       <p className="ninja-product-title">
-        {product.title}
+        {product.name}
       </p>
 
       <div className="ninja-product-pricing">
-        <span className="ninja-old-price">{product.oldPrice}</span>
+        <span className="ninja-old-price">{formatPrice(product.price * 1.2)}</span>
         <div className="ninja-new-price-container">
-          <div className="ninja-new-price">{product.newPrice}</div>
+          <div className="ninja-new-price">{formatPrice(product.price)}</div>
           {discount > 0 && (
             <span className="ninja-discount-tag">
               -{discount}%
@@ -68,17 +57,15 @@ const NinjaProductCard = ({ product }: { product: Product }) => {
         <p className="ninja-pix-info">
           no PIX
         </p>
-        <p className="ninja-installments">{product.installments}</p>
+        <p className="ninja-installments">ou 10x de {formatPrice(product.price / 10)}</p>
       </div>
 
       <div className="ninja-footer">
-        {product.ninja && (
-          <img
-            src="https://placehold.co/100x20/003399/FFFFFF?text=PRIME+NINJA"
-            alt="Prime Ninja"
-            className="ninja-logo"
-          />
-        )}
+        <img
+          src="https://placehold.co/100x20/003399/FFFFFF?text=PRIME+NINJA"
+          alt="Prime Ninja"
+          className="ninja-logo"
+        />
         <CountdownTimer compact={true} />
       </div>
     </div>

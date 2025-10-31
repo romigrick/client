@@ -108,12 +108,41 @@ const findById = async (id: number): Promise<IResponse> => {
   return response;
 };
 
+/**
+ * Função para buscar produtos por categoria
+ * @param categoryName - Nome da categoria
+ * @returns - Retorna uma Promise com a resposta da API
+ */
+const findProductsByCategoryName = async (categoryName: string): Promise<IResponse> => {
+  let response = {} as IResponse;
+  try {
+    const data = await api.get(`${categoryURL}/search?name=${encodeURIComponent(categoryName)}`);
+    response = {
+      status: 200,
+      success: true,
+      message: "Produtos da categoria carregados com sucesso!",
+      data: data.data,
+    };
+  } catch (err: any) {
+    response = {
+      status: err.response?.status || 500,
+      success: false,
+      message: "Falha ao carregar produtos da categoria",
+      data: err.response?.data || err.message,
+    };
+  }
+  return response;
+};
+
 // Objeto que exporta todas as funções
 const CategoryService = {
   save,
   findAll,
   remove,
   findById,
+  getAllCategories: findAll,
+  getCategoryById: findById,
+  findProductsByCategoryName,
 };
 
 export default CategoryService;

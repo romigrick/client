@@ -1,24 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 import Header from '../../components/Header/index';
 import Footer from '../../components/Footer/index';
+import ProductService from '../../services/productService';
+import CategoryService from '../../services/categoryService';
+import type { IProduct, ICategory } from '../../commons/types';
 
 // --- Interfaces de Tipos ---
-
-interface ListingProduct {
-  id: number;
-  imgSrc: string;
-  title: string;
-  rating: number;
-  reviewCount: number;
-  oldPrice: string | null;
-  newPrice: string;
-  installments: string;
-  freeShipping: boolean;
-  prime: boolean;
-}
 
 interface FilterOption {
   label: string;
@@ -37,76 +28,16 @@ interface FilterSidebarProps {
   filters: FilterGroup[];
   onFilterChange: (groupId: string, optionLabel: string) => void;
   onToggleGroup: (groupId: string) => void;
+  categories: ICategory[];
+  selectedCategory: string;
+  onCategoryChange: (categoryName: string) => void;
 }
 
 interface ListingProductCardProps {
-  product: ListingProduct;
+  product: IProduct;
 }
 
-// --- Dados Mockados ---
-
-const listingProducts: ListingProduct[] = [
-  {
-    id: 1,
-    imgSrc: 'https://placehold.co/150x150/eee/333?text=Fonte+MSI',
-    title: 'Fonte MSI MAG A650BN, 650W, 80 Plus Bronze, PFC Ativo, Com Cabo, Preto - 306-7ZP2B22-CE0',
-    rating: 5,
-    reviewCount: 980,
-    oldPrice: 'R$ 319,99',
-    newPrice: 'R$ 219,99',
-    installments: 'ou 10x de R$ 23,64',
-    freeShipping: false,
-    prime: true,
-  },
-  {
-    id: 2,
-    imgSrc: 'https://placehold.co/150x150/eee/333?text=RAM+Kingston',
-    title: 'Memória RAM Kingston Fury Beast, 16GB, 3200MHz, DDR4, CL16, Preto - KF432C16BB1/16',
-    rating: 5,
-    reviewCount: 980,
-    oldPrice: null,
-    newPrice: 'R$ 399,99',
-    installments: 'ou 10x de R$ 39,99',
-    freeShipping: false,
-    prime: false,
-  },
-  {
-    id: 3,
-    imgSrc: 'https://placehold.co/150x150/eee/333?text=SSD+Kingston',
-    title: 'SSD Kingston NV2 1TB, M.2 2280, PCIe 4.0 x4, NVMe, Leitura: 3500 MB/s, Gravação: 2100 MB/s - SNV2S/1000G',
-    rating: 5,
-    reviewCount: 980,
-    oldPrice: null,
-    newPrice: 'R$ 399,99',
-    installments: 'ou 10x de R$ 46,66',
-    freeShipping: true,
-    prime: false,
-  },
-  {
-    id: 4,
-    imgSrc: 'https://placehold.co/150x150/eee/333?text=RAM+Kingston',
-    title: 'Memória RAM Kingston Fury Beast, 8GB, 3200MHz, DDR4, CL16, Preto - KF432C16BB/8',
-    rating: 5,
-    reviewCount: 980,
-    oldPrice: null,
-    newPrice: 'R$ 137,99',
-    installments: 'ou 10x de R$ 27,19',
-    freeShipping: false,
-    prime: false,
-  },
-  {
-    id: 5,
-    imgSrc: 'https://placehold.co/150x150/eee/333?text=RAM+Kingston',
-    title: 'Memória RAM Kingston Fury Beast, 8GB, 3200MHz, DDR4, CL16, Preto - KF432C16BB/8',
-    rating: 5,
-    reviewCount: 980,
-    oldPrice: null,
-    newPrice: 'R$ 219,99',
-    installments: 'ou 10x de R$ 23,39',
-    freeShipping: false,
-    prime: false,
-  },
-];
+// --- Dados Mockados para Filtros ---
 
 const mockFilters: FilterGroup[] = [
   {
@@ -141,9 +72,9 @@ const mockFilters: FilterGroup[] = [
 ];
 
 // --- Componente: Barra Lateral de Filtros ---
-function FilterSidebar({ filters, onFilterChange, onToggleGroup }: FilterSidebarProps) {
+function FilterSidebar({ filters, onFilterChange, onToggleGroup, categories, selectedCategory, onCategoryChange }: FilterSidebarProps) {
   const sidebarStyle = {
-    width: '100%',
+    width: '30%',
     paddingRight: '1rem'
   };
 
@@ -228,22 +159,47 @@ function FilterSidebar({ filters, onFilterChange, onToggleGroup }: FilterSidebar
     marginLeft: 'auto'
   };
 
+  const categoryOptionStyle = (active: boolean) => ({
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '0.875rem',
+    color: active ? '#ff6600' : '#374151',
+    cursor: 'pointer',
+    marginBottom: '0.5rem',
+    fontWeight: active ? 'bold' : 'normal'
+  });
+
   return (
     <aside style={sidebarStyle}>
       <div style={breadcrumbStyle}>
         <a href="#" style={breadcrumbLinkStyle}>Hardware</a> / <a href="#" style={breadcrumbLinkStyle}>SSD</a> / <span style={{ fontWeight: 'bold' }}>SSD M.2</span>
       </div>
 
-      <h3 style={categoryTitleStyle}>Categorias relacionadas</h3>
-      <nav style={navStyle}>
-        <a href="#" style={navLinkStyle}>Hardware</a>
-        <a href="#" style={{ ...navLinkStyle, fontWeight: 'bold', marginLeft: '0.5rem' }}>SSD</a>
-        <a href="#" style={{ ...navLinkStyle, marginLeft: '1rem' }}>SSD 2.5"</a>
-        <a href="#" style={{ ...navLinkStyle, fontWeight: 'bold', marginLeft: '1rem' }}>SSD M.2</a>
-        <a href="#" style={{ ...navLinkStyle, marginLeft: '1rem' }}>SSD Externo</a>
-        <a href="#" style={navLinkStyle}>PC Hardware</a>
-        <a href="#" style={{ ...breadcrumbLinkStyle, fontSize: '0.75rem' }}>Ver mais</a>
-      </nav>
+      <h3 style={categoryTitleStyle}>Filtrar por Categoria</h3>
+      <div style={optionsStyle}>
+        <label style={categoryOptionStyle(!selectedCategory)} onClick={() => onCategoryChange('')}>
+          <input
+            type="radio"
+            name="category"
+            checked={!selectedCategory}
+            onChange={() => onCategoryChange('')}
+            style={{ marginRight: '0.5rem' }}
+          />
+          TODOS
+        </label>
+        {categories.map(category => (
+          <label key={category.id} style={categoryOptionStyle(selectedCategory === category.name)} onClick={() => onCategoryChange(category.name)}>
+            <input
+              type="radio"
+              name="category"
+              checked={selectedCategory === category.name}
+              onChange={() => onCategoryChange(category.name)}
+              style={{ marginRight: '0.5rem' }}
+            />
+            {category.name}
+          </label>
+        ))}
+      </div>
 
       {filters.map(group => (
         <div key={group.id} style={filterGroupStyle}>
@@ -277,6 +233,13 @@ function FilterSidebar({ filters, onFilterChange, onToggleGroup }: FilterSidebar
 
 // --- Componente: Card de Produto da Listagem ---
 function ListingProductCard({ product }: ListingProductCardProps) {
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
+
   const cardStyle = {
     backgroundColor: 'white',
     border: '1px solid #e5e7eb',
@@ -286,7 +249,8 @@ function ListingProductCard({ product }: ListingProductCardProps) {
     display: 'flex',
     flexDirection: 'column' as const,
     justifyContent: 'space-between',
-    transition: 'box-shadow 0.2s'
+    transition: 'box-shadow 0.2s',
+    position: 'relative' as const
   };
 
   const imageStyle = {
@@ -300,12 +264,14 @@ function ListingProductCard({ product }: ListingProductCardProps) {
   const starsContainerStyle = {
     display: 'flex',
     alignItems: 'center',
-    height: '1.25rem'
+    gap: '0.125rem',
+    position: 'absolute' as const,
+    top: '0.5rem',
+    right: '0.5rem'
   };
 
   const starStyle = (filled: boolean) => ({
-    width: '0.75rem',
-    height: '0.75rem',
+    fontSize: '0.75rem',
     color: filled ? '#fb923c' : '#d1d5db'
   });
 
@@ -377,7 +343,7 @@ function ListingProductCard({ product }: ListingProductCardProps) {
     cursor: 'pointer'
   };
 
-  const renderStars = (rating: number, reviewCount: number) => {
+  const renderStars = (rating: number = 5, reviewCount: number = 980) => {
     let stars: React.ReactElement[] = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
@@ -394,39 +360,22 @@ function ListingProductCard({ product }: ListingProductCardProps) {
 
   return (
     <div style={cardStyle}>
+      {renderStars()}
       <img
-        src={product.imgSrc}
-        alt={product.title}
+        src={product.urlImagem || 'https://placehold.co/150x150/eee/333?text=Produto'}
+        alt={product.name}
         style={imageStyle}
       />
-      {renderStars(product.rating, product.reviewCount)}
       <p style={titleStyle}>
-        {product.title}
+        {product.name}
       </p>
 
       <div style={pricingStyle}>
-        {product.oldPrice && (
-          <span style={oldPriceStyle}>{product.oldPrice}</span>
-        )}
         <div style={newPriceStyle}>
-          {product.newPrice}
+          {formatPrice(product.price)}
         </div>
         <p style={pixInfoStyle}>à vista no PIX</p>
-        <p style={installmentsStyle}>{product.installments}</p>
-
-        {product.prime && (
-          <img
-            src="https://placehold.co/100x20/003399/FFFFFF?text=PRIME+NINJA"
-            alt="Prime Ninja"
-            style={primeStyle}
-          />
-        )}
-        {product.freeShipping && (
-          <span style={shippingStyle}>
-            <i className="pi pi-truck" style={{ marginRight: '0.25rem' }} />
-            Frete grátis
-          </span>
-        )}
+        <p style={installmentsStyle}>ou 10x de {formatPrice(product.price / 10)}</p>
 
         <button style={buttonStyle}>
           COMPRAR
@@ -438,8 +387,109 @@ function ListingProductCard({ product }: ListingProductCardProps) {
 
 // --- Componente Principal da Página ---
 export default function ProductListingPage() {
+  const location = useLocation();
   const [filters, setFilters] = useState<FilterGroup[]>(mockFilters);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [sortOrder, setSortOrder] = useState<string>('Mais procurados');
+
+  const searchParams = new URLSearchParams(location.search);
+  const categoryFromUrl = searchParams.get('category') || '';
+  const searchFromUrl = searchParams.get('search') || '';
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryFromUrl);
+  const [searchQuery, setSearchQuery] = useState<string>(searchFromUrl);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const categoryFromUrl = searchParams.get('category') || '';
+    const searchFromUrl = searchParams.get('search') || '';
+    setSelectedCategory(categoryFromUrl);
+    setSearchQuery(searchFromUrl);
+  }, [location.search]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await CategoryService.getAllCategories();
+        if (response.success && response.data) {
+          setCategories(response.data as ICategory[]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let response;
+        if (selectedCategory) {
+          response = await ProductService.findByCategoryName(selectedCategory);
+        } else if (searchQuery) {
+          // For search, use findAll and filter client-side since backend doesn't have search endpoint
+          response = await ProductService.findAll();
+        } else {
+          let order: string | undefined;
+          let asc: boolean = true;
+          if (sortOrder === 'Menor preço') {
+            order = 'price';
+            asc = true;
+          } else if (sortOrder === 'Maior preço') {
+            order = 'price';
+            asc = false;
+          } else if (sortOrder === 'Mais vendidos') {
+            order = 'sales';
+            asc = false;
+          }
+          response = await ProductService.findAllPaged(currentPage, pageSize, order, asc);
+        }
+        if (response.success && response.data) {
+          let fetchedProducts = response.data as IProduct[];
+
+          // Apply search filter
+          if (searchQuery) {
+            fetchedProducts = fetchedProducts.filter(product =>
+              product.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+          }
+
+          // Apply sorting if category is selected or search is active
+          if ((selectedCategory || searchQuery) && sortOrder !== 'Mais procurados') {
+            fetchedProducts = [...fetchedProducts].sort((a, b) => {
+              if (sortOrder === 'Menor preço') {
+                return a.price - b.price;
+              } else if (sortOrder === 'Maior preço') {
+                return b.price - a.price;
+              } else if (sortOrder === 'Mais vendidos') {
+                // For now, sort by id as a proxy for popularity
+                return (b.id || 0) - (a.id || 0);
+              }
+              return 0;
+            });
+          }
+          setProducts(fetchedProducts);
+          setTotalElements(fetchedProducts.length);
+          setTotalPages(1);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [currentPage, pageSize, selectedCategory, sortOrder, searchQuery]);
 
   const handleFilterChange = (groupId: string, optionLabel: string) => {
     setFilters(prevFilters =>
@@ -462,10 +512,14 @@ export default function ProductListingPage() {
     );
   };
 
-  const categories: string[] = [
-    "TODOS", "COOLERS", "DISCO RÍGIDO (HD)", "DRIVES", "FONTES", "KIT HARDWARE", "MEMÓRIA RAM", "PLACA DE VÍDEO (VGA)", "PLACAS INTERFACE"
-  ];
-  const [activeTab, setActiveTab] = useState<string>("TODOS");
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleCategoryChange = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setCurrentPage(0);
+  };
 
   const containerStyle = {
     maxWidth: '1280px',
@@ -529,7 +583,7 @@ export default function ProductListingPage() {
 
   const sidebarStyle = {
     width: '25%',
-    paddingRight: '1rem'
+    paddingRight: '2rem'
   };
 
   const mainStyle = {
@@ -581,37 +635,6 @@ export default function ProductListingPage() {
     cursor: 'pointer'
   });
 
-  const tabsStyle = {
-    marginBottom: '1rem',
-    overflowX: 'auto' as const
-  };
-
-  const tabsContainerStyle = {
-    display: 'flex',
-    gap: '0.5rem',
-    paddingBottom: '0.5rem'
-  };
-
-  const tabTitleStyle = {
-    fontSize: '1.125rem',
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginRight: '0.5rem',
-    whiteSpace: 'nowrap' as const
-  };
-
-  const tabButtonStyle = (active: boolean) => ({
-    padding: '0.5rem 1rem',
-    borderRadius: '0.375rem',
-    fontWeight: 'bold',
-    fontSize: '0.875rem',
-    whiteSpace: 'nowrap' as const,
-    backgroundColor: active ? '#ff6600' : '#e5e7eb',
-    color: active ? 'white' : '#374151',
-    border: 'none',
-    cursor: 'pointer'
-  });
-
   const gridStyle = {
     display: 'grid',
     gap: '1rem',
@@ -641,7 +664,19 @@ export default function ProductListingPage() {
       <div style={containerStyle}>
         {/* Breadcrumbs */}
         <div style={breadcrumbStyle}>
-          Você está em: <a href="#" style={{ color: '#ff6600', textDecoration: 'none' }}>Hardware</a>
+          Você está em: <a href="/" style={{ color: '#ff6600', textDecoration: 'none' }}>Home</a>
+          {searchQuery && (
+            <>
+              {' / '}
+              <span>Busca por "{searchQuery}"</span>
+            </>
+          )}
+          {selectedCategory && !searchQuery && (
+            <>
+              {' / '}
+              <span>{selectedCategory}</span>
+            </>
+          )}
         </div>
 
         {/* Banner Dell */}
@@ -665,6 +700,9 @@ export default function ProductListingPage() {
             filters={filters}
             onFilterChange={handleFilterChange}
             onToggleGroup={handleToggleGroup}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
           />
 
           {/* Conteúdo Principal da Listagem */}
@@ -674,7 +712,7 @@ export default function ProductListingPage() {
               <div style={controlsLeftStyle}>
                 <label style={labelStyle}>
                   Ordernar:
-                  <select style={selectStyle}>
+                  <select style={selectStyle} value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
                     <option>Mais procurados</option>
                     <option>Mais vendidos</option>
                     <option>Menor preço</option>
@@ -683,15 +721,15 @@ export default function ProductListingPage() {
                 </label>
                 <label style={labelStyle}>
                   Exibir:
-                  <select style={selectStyle}>
-                    <option>20 por página</option>
-                    <option>50 por página</option>
-                    <option>100 por página</option>
+                  <select style={selectStyle} value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
+                    <option value={20}>20 por página</option>
+                    <option value={50}>50 por página</option>
+                    <option value={100}>100 por página</option>
                   </select>
                 </label>
               </div>
               <div style={controlsRightStyle}>
-                <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>8543 produtos</span>
+                <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>{totalElements} produtos</span>
                 <button
                   onClick={() => setViewMode('grid')}
                   style={viewButtonStyle(viewMode === 'grid')}
@@ -707,43 +745,50 @@ export default function ProductListingPage() {
               </div>
             </div>
 
-            {/* Abas de Categoria */}
-            <div style={tabsStyle}>
-              <div style={tabsContainerStyle}>
-                <h3 style={tabTitleStyle}>CATEGORIAS</h3>
-                {categories.map(category => (
-                  <button
-                    key={category}
-                    onClick={() => setActiveTab(category)}
-                    style={tabButtonStyle(activeTab === category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Grid de Produtos */}
             <div style={gridStyle}>
-              {listingProducts.map(product => (
-                <ListingProductCard key={product.id} product={product} />
-              ))}
+              {loading ? (
+                <div className="text-center w-full py-8">Carregando produtos...</div>
+              ) : (
+                products.map(product => (
+                  <ListingProductCard key={product.id} product={product} />
+                ))
+              )}
             </div>
 
             {/* Paginação */}
-            <div style={paginationStyle}>
-              <button style={pageButtonStyle(false)}>
-                <i className="pi pi-chevron-left" />
-              </button>
-              <button style={pageButtonStyle(true)}>1</button>
-              <button style={pageButtonStyle(false)}>2</button>
-              <button style={pageButtonStyle(false)}>3</button>
-              <span style={{ padding: '0.5rem', color: '#374151' }}>...</span>
-              <button style={pageButtonStyle(false)}>100</button>
-              <button style={pageButtonStyle(false)}>
-                <i className="pi pi-chevron-right" />
-              </button>
-            </div>
+            {!selectedCategory && (
+              <div style={paginationStyle}>
+                <button
+                  style={pageButtonStyle(false)}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 0}
+                >
+                  <i className="pi pi-chevron-left" />
+                </button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const page = Math.max(0, currentPage - 2) + i;
+                  if (page >= totalPages) return null;
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      style={pageButtonStyle(page === currentPage)}
+                    >
+                      {page + 1}
+                    </button>
+                  );
+                })}
+                <span style={{ padding: '0.5rem', color: '#374151' }}>...</span>
+                <button
+                  style={pageButtonStyle(false)}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  <i className="pi pi-chevron-right" />
+                </button>
+              </div>
+            )}
           </main>
         </div>
       </div>

@@ -1,13 +1,55 @@
-
-import React, { useState } from 'react';
-import { ninjaProducts } from '../../data/mockData';
+import React, { useEffect, useState } from 'react';
+import ProductService from '../../services/productService';
+import CategoryService from '../../services/categoryService';
+import type { IProduct, ICategory } from '../../commons/types';
 import NinjaProductCard from '../NinjaProductCard/index';
 
 const NinjaHighlights = () => {
-  const categories = [
-    "TODOS", "AR E VENTILAÇÃO", "ÁUDIO", "CÂMERAS E DRONES", "CELULAR & SMARTPHONE", "COMPUTADORES", "CONECTIVIDADE", "ELETROPORTÁTEIS", "ESPAÇO GAMER"
-  ];
+  const [categories, setCategories] = useState<string[]>(["TODOS"]);
   const [activeTab, setActiveTab] = useState("TODOS");
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await CategoryService.findAll();
+        if (response.success && response.data) {
+          const categoryNames = (response.data as ICategory[]).map(cat => cat.name);
+          setCategories(["TODOS", ...categoryNames]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        let response;
+        if (activeTab === "TODOS") {
+          response = await ProductService.findAll();
+        } else {
+          response = await ProductService.findByCategoryName(activeTab);
+        }
+        if (response.success && response.data) {
+          setProducts(response.data as IProduct[]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [activeTab]);
 
   // Estilos inline
   const ninjaSectionStyle = {
@@ -139,9 +181,15 @@ const NinjaHighlights = () => {
           <i className="pi pi-chevron-left" />
         </button>
         <div style={carouselScrollAreaStyle}>
-          {ninjaProducts.map(product => (
-            <NinjaProductCard key={product.id} product={product} />
-          ))}
+          {loading ? (
+            <div className="text-center w-full py-8">Carregando produtos...</div>
+          ) : (
+            products.map(product => (
+              <div key={product.id} className="flex-shrink-0">
+                <NinjaProductCard product={product} />
+              </div>
+            ))
+          )}
         </div>
         <button style={{...carouselButtonStyle, right: '-1rem'}} className="next">
           <i className="pi pi-chevron-right" />

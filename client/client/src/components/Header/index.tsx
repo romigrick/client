@@ -262,13 +262,13 @@ const mobileNavLinkOfferStyle = {
   color: '#f97316'
 };
 
-const mobileActionsStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: '1.5rem',
-  left: '1.5rem',
-  display: 'flex',
-  gap: '1rem'
-};
+  const mobileActionsStyle: React.CSSProperties = {
+    position: 'absolute',
+    bottom: '1.5rem',
+    left: '1.5rem',
+    display: 'flex',
+    gap: '1rem'
+  };
 
 const mobileActionIconStyle = {
   padding: '0.5rem',
@@ -283,8 +283,21 @@ const mobileActionIconHoverStyle = {
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { authenticated, authenticatedUser, handleLogout } = useAuth();
   const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   const items: MenuItem[] = authenticated
     ? [
@@ -374,8 +387,15 @@ const Header = () => {
               </div>
             </div>
             <div style={searchBarWrapperStyle}>
-              <input type="text" placeholder="Busque no Katchau!" style={searchInputStyle} />
-              <button style={searchButtonStyle}><i className="pi pi-search" /></button>
+              <input
+                type="text"
+                placeholder="Busque no Katchau!"
+                style={searchInputStyle}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <button style={searchButtonStyle} onClick={handleSearch}><i className="pi pi-search" /></button>
             </div>
           </div>
 
@@ -402,13 +422,9 @@ const Header = () => {
             <span>OFERTAS</span>
             <i className="pi pi-chevron-down" />
           </a>
-          <Link to="/hardware" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Hardware</Link>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Periféricos</a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Computadores</a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Monitores</a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Games</a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Smart Home</a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Celular</a>
+          {['Hardware', 'Periféricos', 'Computadores', 'Monitores', 'Games', 'Smart Home', 'Celular'].map(category => (
+            <Link to={`/products?category=${category}`} key={category} style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>{category}</Link>
+          ))}
         </div>
       </nav>
 
@@ -450,10 +466,9 @@ const Header = () => {
 
           <nav style={mobileNavStyle}>
             <a href="#" style={mobileNavLinkOfferStyle}><span>OFERTAS</span><i className="pi pi-chevron-right" /></a>
-            <Link to="/hardware" style={mobileNavLinkStyle} onClick={() => setMobileMenuOpen(false)}><span>Hardware</span><i className="pi pi-chevron-right" /></Link>
-            <a href="#" style={mobileNavLinkStyle}><span>Periféricos</span><i className="pi pi-chevron-right" /></a>
-            <a href="#" style={mobileNavLinkStyle}><span>Computadores</span><i className="pi pi-chevron-right" /></a>
-            <a href="#" style={mobileNavLinkStyle}><span>Monitores</span><i className="pi pi-chevron-right" /></a>
+            {['Hardware', 'Periféricos', 'Computadores', 'Monitores', 'Games', 'Smart Home', 'Celular'].map(category => (
+              <Link to={`/products?category=${category}`} key={category} style={mobileNavLinkStyle} onClick={() => setMobileMenuOpen(false)}><span>{category}</span><i className="pi pi-chevron-right" /></Link>
+            ))}
           </nav>
 
           <div style={mobileActionsStyle}>

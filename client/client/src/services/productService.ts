@@ -57,6 +57,41 @@ const findAll = async (): Promise<IResponse> => {
 };
 
 /**
+ * Função para buscar produtos paginados
+ * @param page - Página (padrão 0)
+ * @param size - Tamanho da página (padrão 20)
+ * @param order - Campo para ordenação (opcional)
+ * @param asc - Ordem ascendente (opcional, padrão true)
+ * @returns - Retorna uma Promise com a resposta da API
+ */
+const findAllPaged = async (page: number = 0, size: number = 20, order?: string, asc: boolean = true): Promise<IResponse> => {
+  let response = {} as IResponse;
+  try {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+      ...(order && { order }),
+      ...(asc !== undefined && { asc: asc.toString() })
+    });
+    const data = await api.get(`${productURL}/page?${params}`);
+    response = {
+      status: 200,
+      success: true,
+      message: "Produtos paginados carregados com sucesso!",
+      data: data.data,
+    };
+  } catch (err: any) {
+    response = {
+      status: err.response?.status || 500,
+      success: false,
+      message: "Falha ao carregar produtos paginados",
+      data: err.response?.data || err.message,
+    };
+  }
+  return response;
+};
+
+/**
  * Função para remover um produto
  * @param id - Recebe o id do produto que será removido
  * @returns - Retorna uma Promise com a resposta da API
@@ -108,12 +143,40 @@ const findById = async (id: number): Promise<IResponse> => {
   return response;
 };
 
+/**
+ * Função para buscar produtos por nome da categoria
+ * @param categoryName - Nome da categoria
+ * @returns - Retorna uma Promise com a resposta da API
+ */
+const findByCategoryName = async (categoryName: string): Promise<IResponse> => {
+  let response = {} as IResponse;
+  try {
+    const data = await api.get(`${productURL}/category/name/${encodeURIComponent(categoryName)}`);
+    response = {
+      status: 200,
+      success: true,
+      message: "Produtos da categoria carregados com sucesso!",
+      data: data.data,
+    };
+  } catch (err: any) {
+    response = {
+      status: err.response?.status || 500,
+      success: false,
+      message: "Falha ao carregar produtos da categoria",
+      data: err.response?.data || err.message,
+    };
+  }
+  return response;
+};
+
 // Objeto que exporta todas as funções
 const ProductService = {
   save,
   findAll,
+  findAllPaged,
   remove,
   findById,
+  findByCategoryName,
 };
 
 export default ProductService;

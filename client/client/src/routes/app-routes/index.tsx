@@ -18,6 +18,7 @@ export const AppRoutes = () => {
 
       {/* Public route */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/products" element={<ProductListingPage />} />
       <Route path="/hardware" element={<ProductListingPage />} />
 
       {/* Protected routes for logged-in users */}

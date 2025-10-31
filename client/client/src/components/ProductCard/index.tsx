@@ -1,18 +1,11 @@
+import React from 'react';
+import type { IProduct } from '../../commons/types';
 
-
-
-interface Product {
-  imgSrc: string;
-  title: string;
-  rating: number;
-  reviewCount: number;
-  oldPrice: string;
-  newPrice: string;
-  installments: string;
-  freeShipping?: boolean;
+interface ProductCardProps {
+  product: IProduct;
 }
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product }: ProductCardProps) => {
   // Função para renderizar estrelas de avaliação
   const renderStars = (rating: number, reviewCount: number) => {
     let stars = [];
@@ -31,38 +24,42 @@ const ProductCard = ({ product }: { product: Product }) => {
     return <div className="stars-container">{stars}</div>;
   };
 
+  // Função para formatar preço
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
+
+  // URL da imagem do produto
+  const imageUrl = product.urlImagem || 'https://placehold.co/250x250/eee/333?text=Produto';
+
   return (
     <div className="product-card">
       <div className="product-image-container">
         <img
-          src={product.imgSrc}
-          alt={product.title}
+          src={imageUrl}
+          alt={product.name}
           className="product-image"
         />
-        {product.freeShipping && (
-          <span className="shipping-tag">
-            <i className="pi pi-truck"></i>
-            Frete grátis
-          </span>
-        )}
       </div>
 
-      {renderStars(product.rating, product.reviewCount)}
+      {renderStars(5, 0)} {/* Placeholder para estrelas */}
 
       <p className="product-title">
-        {product.title}
+        {product.name}
       </p>
 
       <div className="product-pricing">
-        <span className="old-price">{product.oldPrice}</span>
         <div className="new-price">
-          {product.newPrice}
+          {formatPrice(product.price)}
           <span className="price-label">à vista</span>
         </div>
         <p className="pix-info">
-          no PIX com {Math.round((1 - parseFloat(product.newPrice.replace(/[^0-9,-]+/g, '').replace(',', '.')) / parseFloat(product.oldPrice.replace(/[^0-9,-]+/g, '').replace(',', '.'))) * 100)}% desconto
+          no PIX
         </p>
-        <p className="installments">{product.installments}</p>
+        <p className="installments">ou 10x de {formatPrice(product.price / 10)}</p>
       </div>
     </div>
   );

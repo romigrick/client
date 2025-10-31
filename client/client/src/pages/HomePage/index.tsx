@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 // Import all the page components
