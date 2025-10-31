@@ -23,10 +23,10 @@ const Hero = () => {
           style={{objectFit: 'cover'}}
         />
         <div 
-          className="absolute bg-yellow-400 text-blue-900 py-1 px-3 border-circle text-sm font-bold flex align-items-center"
+          className="absolute bg-yellow-400 text-white py-1 px-3 border-circle text-sm font-bold flex align-items-center"
           style={{top: '1rem', left: '1rem'}}
         >
-          <i className="pi pi-mobile mr-1"></i>
+          <i className="pi pi-mobile mr-1 text-white"></i>
           Exclusivo no APP
         </div>
       </div>
