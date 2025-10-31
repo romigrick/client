@@ -402,7 +402,7 @@ const Header = () => {
             <span>OFERTAS</span>
             <i className="pi pi-chevron-down" />
           </a>
-          <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Hardware</a>
+          <Link to="/hardware" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Hardware</Link>
           <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Periféricos</a>
           <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Computadores</a>
           <a href="#" style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>Monitores</a>
@@ -450,7 +450,7 @@ const Header = () => {
 
           <nav style={mobileNavStyle}>
             <a href="#" style={mobileNavLinkOfferStyle}><span>OFERTAS</span><i className="pi pi-chevron-right" /></a>
-            <a href="#" style={mobileNavLinkStyle}><span>Hardware</span><i className="pi pi-chevron-right" /></a>
+            <Link to="/hardware" style={mobileNavLinkStyle} onClick={() => setMobileMenuOpen(false)}><span>Hardware</span><i className="pi pi-chevron-right" /></Link>
             <a href="#" style={mobileNavLinkStyle}><span>Periféricos</span><i className="pi pi-chevron-right" /></a>
             <a href="#" style={mobileNavLinkStyle}><span>Computadores</span><i className="pi pi-chevron-right" /></a>
             <a href="#" style={mobileNavLinkStyle}><span>Monitores</span><i className="pi pi-chevron-right" /></a>
