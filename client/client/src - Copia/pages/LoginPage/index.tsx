@@ -10,6 +10,7 @@ import type { AuthenticationResponse, IUserLogin } from "@/commons/types";
 import { useAuth } from "@/context/hooks/use-auth";
 import AuthService from "@/services/authService";
 import { Toast } from "primereact/toast";
+import './index.css';
 
 export const LoginPage = () => {
   const {
@@ -58,9 +59,9 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-content-center align-items-center min-h-screen p-4">
+    <div className="form-container">
       <Toast ref={toast} />
-      <Card title="Login" className="w-full max-w-25rem shadow-4">
+      <Card title="Login" className="form-card">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="p-fluid flex flex-column gap-3"

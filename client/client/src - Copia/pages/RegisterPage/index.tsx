@@ -10,6 +10,7 @@ import { useRef, useState } from "react";
 import type { IUserRegister } from "@/commons/types";
 import AuthService from "@/services/authService";
 import { Toast } from "primereact/toast";
+import './index.css';
 
 export const RegisterPage = () => {
   const {
@@ -59,10 +60,10 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="flex justify-content-center align-items-center min-h-screen p-4">
+    <div className="form-container">
       <Toast ref={toast} />
-      <Card title="Registrar Conta" className="w-full max-w-25rem shadow-4">
-        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid flex flex-column gap-3">
+      <Card title="Registrar Conta" className="form-card">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid space-y-4">
           <div>
             <label className="block mb-2">Nome de Exibição</label>
             <Controller
