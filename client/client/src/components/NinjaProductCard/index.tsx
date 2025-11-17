@@ -1,5 +1,6 @@
 import React from 'react';
 import CountdownTimer from '../CountdownTimer/index';
+import { useCart } from '../../context/hooks/use-cart';
 import type { IProduct } from '../../commons/types';
 
 const ninjaProductCardStyle: React.CSSProperties = {
@@ -142,6 +143,8 @@ const ninjaLogoStyle: React.CSSProperties = {
 };
 
 const NinjaProductCard = ({ product }: { product: IProduct }) => {
+  const { addToCart } = useCart();
+
   const calculateDiscount = (oldPrice: number, newPrice: number): number => {
     if (oldPrice === 0) return 0;
     return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
@@ -155,6 +158,11 @@ const NinjaProductCard = ({ product }: { product: IProduct }) => {
       style: 'currency',
       currency: 'BRL'
     }).format(price);
+  };
+
+  // Função para adicionar ao carrinho
+  const handleAddToCart = () => {
+    addToCart(product);
   };
 
   // URL da imagem do produto
@@ -201,6 +209,22 @@ const NinjaProductCard = ({ product }: { product: IProduct }) => {
       </div>
 
       <div style={ninjaFooterStyle}>
+        <button
+          onClick={handleAddToCart}
+          style={{
+            backgroundColor: '#ff6600',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            marginRight: '8px'
+          }}
+        >
+          Adicionar ao Carrinho
+        </button>
         <img
           src="https://placehold.co/100x20/003399/FFFFFF?text=PRIME+NINJA"
           alt="Prime Ninja"

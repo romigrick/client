@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { ICartItem, IProduct } from '../commons/types';
 
-interface CartContextType {
+export interface CartContextType {
   items: ICartItem[];
   addToCart: (product: IProduct, quantity?: number) => void;
   removeFromCart: (productId: number) => void;

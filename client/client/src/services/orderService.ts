@@ -12,7 +12,7 @@ const orderURL = "/orders";
 const createOrder = async (order: IOrder): Promise<IResponse> => {
   let response = {} as IResponse;
   try {
-    const data = await api.post(orderURL, order);
+    const data = await api.post(`${orderURL}/finalize`, order);
     response = {
       status: 201,
       success: true,

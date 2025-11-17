@@ -8,6 +8,7 @@ import Header from '../../components/Header/index';
 import Footer from '../../components/Footer/index';
 import ProductService from '../../services/productService';
 import CategoryService from '../../services/categoryService';
+import { useCart } from '../../context/hooks/use-cart';
 import type { IProduct, ICategory, FilterOption, FilterGroup, FilterSidebarProps, ListingProductCardProps } from '../../commons/types';
 import bannerImage from '../../assets/1761763638esquenta-black-das-blacks.webp';
 
@@ -205,11 +206,17 @@ function FilterSidebar({ filters, onFilterChange, onToggleGroup, categories, sel
 
 // --- Componente: Card de Produto da Listagem ---
 function ListingProductCard({ product }: ListingProductCardProps) {
+  const { addToCart } = useCart();
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(price);
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product);
   };
 
   const cardStyle: React.CSSProperties = {
@@ -325,8 +332,8 @@ function ListingProductCard({ product }: ListingProductCardProps) {
         <p style={pixInfoStyle}>à vista no PIX</p>
         <p style={installmentsStyle}>ou 10x de {formatPrice(product.price / 10)}</p>
 
-        <button style={buttonStyle}>
-          COMPRAR
+        <button style={buttonStyle} onClick={handleAddToCart}>
+          Adicionar ao Carrinho
         </button>
       </div>
     </div>

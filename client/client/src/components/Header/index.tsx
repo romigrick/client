@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/hooks/use-auth';
 import { Button } from 'primereact/button';
-import { Menubar } from 'primereact/menubar';
-import type { MenuItem } from 'primereact/menuitem';
+import { useCart } from '@/context/hooks/use-cart';
 import CategoryService from '../../services/categoryService';
 import type { ICategory } from '../../commons/types';
 import logoImage from '@/assets/katchau_logo.png';
+import { Badge } from 'primereact/badge';
+import { Menu } from 'primereact/menu';
+import { OverlayPanel } from 'primereact/overlaypanel';
 
 // Styles migrated from index.css
 const headerStyle: React.CSSProperties = {
@@ -283,11 +285,72 @@ const mobileActionIconHoverStyle = {
   backgroundColor: '#e5e7eb'
 };
 
+interface AuthDisplayProps {
+  authenticated: boolean;
+  authenticatedUser: { displayName?: string } | null;
+  handleLogout: () => void;
+  navigate: (path: string) => void;
+}
+
+const AuthDisplay: React.FC<AuthDisplayProps> = ({ authenticated, authenticatedUser, handleLogout, navigate }) => {
+  const userMenuRef = useRef<OverlayPanel>(null);
+  const userMenuItems = [
+    {
+      label: 'Minha Conta',
+      icon: 'pi pi-user',
+      command: () => navigate('/account')
+    },
+    {
+      label: 'Meus Pedidos',
+      icon: 'pi pi-shopping-bag',
+      command: () => navigate('/orders')
+    },
+    {
+      label: 'Meus Dados',
+      icon: 'pi pi-id-card',
+      command: () => navigate('/account')
+    },
+    {
+      label: 'Endereço',
+      icon: 'pi pi-map-marker',
+      command: () => navigate('/addresses')
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'Sair',
+      icon: 'pi pi-sign-out',
+      command: () => handleLogout()
+    }
+  ];
+
+  if (authenticated) {
+    return (
+      <div className="flex align-items-center gap-2 cursor-pointer p-2 border-round-md text-white hover:bg-blue-800" onClick={(e) => userMenuRef.current?.toggle(e)}>
+        <span style={{ marginRight: '1rem' }}>Olá, {authenticatedUser?.displayName}</span>
+        <i className="pi pi-chevron-down" />
+        <OverlayPanel ref={userMenuRef} style={{ width: '200px', padding: '0', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <Menu model={userMenuItems} style={{ width: '100%', border: 'none', backgroundColor: 'transparent', padding: '0' }} />
+        </OverlayPanel>
+      </div>
+    );
+  }
+
+  return (
+    <Link to="/login" style={loginDesktopStyle} className="hover:bg-blue-800">
+      <i className="pi pi-user" />
+      <span>Entrar</span>
+    </Link>
+  );
+};
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [categories, setCategories] = useState<ICategory[]>([]);
   const { authenticated, authenticatedUser, handleLogout } = useAuth();
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const { items: cartItems } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -317,66 +380,6 @@ const Header = () => {
     }
   };
 
-  const items: MenuItem[] = authenticated
-    ? [
-        { label: "Home", icon: "pi pi-home", command: () => navigate("/") },
-        {
-          label: "Categorias",
-          icon: "pi pi-box",
-          items: [
-            {
-              label: "Listar",
-              icon: "pi pi-list",
-              command: () => navigate("/categories"),
-            },
-            {
-              label: "Novo",
-              icon: "pi pi-plus",
-              command: () => navigate("/categories/new"),
-            },
-          ],
-        },
-        {
-          label: "Produtos",
-          icon: "pi pi-box",
-          items: [
-            {
-              label: "Listar",
-              icon: "pi pi-list",
-              command: () => navigate("/products"),
-            },
-            {
-              label: "Novo",
-              icon: "pi pi-plus",
-              command: () => navigate("/products/new"),
-            },
-          ],
-        },
-        { label: "Prod. Show", icon: "pi pi-search", command: () => navigate("/products/show") },
-      ]
-    : [];
-
-  const AuthDisplay = () => {
-    if (authenticated) {
-      return (
-        <div className="flex align-items-center gap-2 cursor-pointer p-2 border-round-md text-white hover:bg-blue-800">
-          <span style={{marginRight: '1rem'}}>Olá, {authenticatedUser?.displayName}</span>
-          <button onClick={() => { handleLogout(); }} className="p-button p-button-sm p-button-danger">Sair</button>
-        </div>
-      );
-    } else {
-      return (
-        <Link to="/login" className="flex align-items-center gap-2 cursor-pointer p-2 border-round-md no-underline text-white hover:bg-blue-800">
-          <i className="pi pi-user" />
-          <div className="text-xs">
-            <div>Entre ou</div>
-            <div className="font-bold">Cadastre-se</div>
-          </div>
-        </Link>
-      );
-    }
-  };
-
   return (
     <header style={headerStyle}>
       <div style={headerContainerStyle}>
@@ -385,8 +388,6 @@ const Header = () => {
             <button
               onClick={() => setMobileMenuOpen(true)}
               style={mobileMenuButtonStyle}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0044cc'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'none'}
               className="lg:hidden"
             >
               <i className="pi pi-bars" />
@@ -422,26 +423,49 @@ const Header = () => {
               <a href="#" style={actionIconStyle}><i className="pi pi-star" /></a>
               <a href="#" style={actionIconStyle}><i className="pi pi-bell" /></a>
               <a href="#" style={actionIconStyle}><i className="pi pi-heart" /></a>
-              <a href="/cart" style={cartIconStyle}><i className="pi pi-shopping-cart" /></a>
+              <Link to="/cart" className="p-overlay-badge" style={cartIconStyle}>
+                <i className="pi pi-shopping-cart" />
+                {cartItems.length > 0 && <Badge value={cartItems.length} severity="danger"></Badge>}
+              </Link>
             </div>
-            <AuthDisplay />
+            <AuthDisplay authenticated={authenticated} authenticatedUser={authenticatedUser} handleLogout={handleLogout} navigate={navigate} />
           </div>
 
-          <div className="block lg:hidden">
-            <a href="#" style={cartIconStyle}><i className="pi pi-shopping-cart" /></a>
+          <div className="block lg:hidden flex align-items-center gap-4">
+            {authenticated ? (
+              <div style={mobileLoginStyle}>
+                <i className="pi pi-user text-orange-500 text-2xl" />
+                <div className="text-xs">
+                  <div>Olá,</div>
+                  <div className="font-bold">{authenticatedUser?.displayName}</div>
+                </div>
+              </div>
+            ) : (
+              <Link to="/login" style={mobileLoginStyle}>
+                <i className="pi pi-user text-orange-500 text-2xl" />
+                <div className="text-xs">
+                  <div>Entre ou</div>
+                  <div className="font-bold">Cadastre-se</div>
+                </div>
+              </Link>
+            )}
+            <Link to="/cart" className="p-overlay-badge" style={cartIconStyle}>
+                <i className="pi pi-shopping-cart" />
+                {cartItems.length > 0 && <Badge value={cartItems.length} severity="danger"></Badge>}
+            </Link>
           </div>
         </div>
       </div>
 
       <nav style={navbarDesktopStyle} className="hidden lg:block">
         <div style={navbarContainerStyle}>
-          <Link to={`/products`} style={offerLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>
+          <Link to={`/products`} style={offerLinkStyle}>
             <i className="pi pi-tag" />
             <span>TODOS</span>
             <i className="pi pi-chevron-down" />
           </Link>
           {categories.map(category => (
-            <Link to={`/products?category=${category.name}`} key={category.id} style={navLinkStyle} onMouseEnter={(e) => e.currentTarget.style.color = '#f97316'} onMouseLeave={(e) => e.currentTarget.style.color = 'white'}>{category.name}</Link>
+            <Link to={`/products?category=${category.name}`} key={category.id} style={navLinkStyle}>{category.name}</Link>
           ))}
         </div>
       </nav>
@@ -474,7 +498,7 @@ const Header = () => {
             </button>
           </div>
 
-          <div style={mobileSendToStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+          <div style={mobileSendToStyle}>
             <i className="pi pi-map-marker text-orange-500 text-2xl" />
             <div className="text-xs">
               <div>Enviar para</div>
@@ -490,10 +514,10 @@ const Header = () => {
           </nav>
 
           <div style={mobileActionsStyle}>
-            <a href="#" style={mobileActionIconStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}><i className="pi pi-bell" /></a>
-            <a href="#" style={mobileActionIconStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}><i className="pi pi-heart" /></a>
+            <a href="#" style={mobileActionIconStyle}><i className="pi pi-bell" /></a>
+            <a href="#" style={mobileActionIconStyle}><i className="pi pi-heart" /></a>
             {authenticated && (
-              <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); setMobileMenuOpen(false); }} style={mobileActionIconStyle} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); setMobileMenuOpen(false); }} style={mobileActionIconStyle}>
                 <i className="pi pi-sign-out" />
               </a>
             )}

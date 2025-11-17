@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/index';
 import Footer from '../../components/Footer/index';
 import { useCart } from '../../context/CartContext';
 import OrderService from '../../services/orderService';
-import type { IOrder } from '../../commons/types';
+import AddressService from '../../services/addressService';
+import type { IOrder, IOrderItem, IAddress } from '../../commons/types';
 import CartItem from './CartItem';
 import CartTotal from './CartTotal';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import { RadioButton } from 'primereact/radiobutton';
 import './styles.css';
 
 const CartPage = () => {
   const { items, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  const [addresses, setAddresses] = useState<IAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -26,16 +33,45 @@ const CartPage = () => {
       return;
     }
 
-    const order: IOrder = {
-      items: items,
-      total: getTotalPrice(),
-    };
+    // Check if user has addresses
+    try {
+      const addressResponse = await AddressService.getUserAddresses();
+      if (!addressResponse.success || !addressResponse.data || addressResponse.data.length === 0) {
+        alert('Você precisa cadastrar um endereço antes de finalizar o pedido.');
+        navigate('/addresses');
+        return;
+      }
+
+      // Show address selection dialog
+      setAddresses(addressResponse.data);
+      setSelectedAddressId(addressResponse.data[0].id!);
+      setShowAddressDialog(true);
+    } catch (error) {
+      console.error('Erro ao carregar endereços:', error);
+      alert('Erro ao carregar endereços. Tente novamente.');
+    }
+  };
+
+  const handleConfirmOrder = async () => {
+    if (!selectedAddressId) {
+      alert('Selecione um endereço para entrega.');
+      return;
+    }
 
     try {
+      const order: IOrder = {
+        address: { id: selectedAddressId },
+        items: items.map(item => ({
+          product: { id: item.product.id! },
+          quantity: item.quantity
+        })) as IOrderItem[],
+      };
+
       const response = await OrderService.createOrder(order);
       if (response.success) {
         alert('Pedido realizado com sucesso!');
         clearCart();
+        setShowAddressDialog(false);
         navigate('/');
       } else {
         alert('Erro ao finalizar pedido: ' + response.message);
@@ -120,6 +156,23 @@ const CartPage = () => {
     paddingBottom: '0.5rem'
   };
 
+  const addressDialogFooter = (
+    <div>
+      <Button
+        label="Cancelar"
+        icon="pi pi-times"
+        onClick={() => setShowAddressDialog(false)}
+        className="p-button-text"
+      />
+      <Button
+        label="Confirmar Pedido"
+        icon="pi pi-check"
+        onClick={handleConfirmOrder}
+        autoFocus
+      />
+    </div>
+  );
+
   return (
     <>
       <Header />
@@ -164,6 +217,38 @@ const CartPage = () => {
           </div>
         )}
       </div>
+
+      {/* Address Selection Dialog */}
+      <Dialog
+        header="Selecione o endereço de entrega"
+        visible={showAddressDialog}
+        style={{ width: '50vw' }}
+        footer={addressDialogFooter}
+        onHide={() => setShowAddressDialog(false)}
+      >
+        <div className="p-fluid">
+          {addresses.map((address) => (
+            <div key={address.id} className="field-radiobutton mb-3">
+              <RadioButton
+                inputId={`address-${address.id}`}
+                name="address"
+                value={address.id}
+                onChange={(e) => setSelectedAddressId(e.value)}
+                checked={selectedAddressId === address.id}
+              />
+              <label htmlFor={`address-${address.id}`} className="ml-2">
+                <div className="font-medium">
+                  {address.street}, {address.number} - {address.city}, {address.state}
+                </div>
+                <div className="text-sm text-gray-600">
+                  CEP: {address.zipCode}
+                </div>
+              </label>
+            </div>
+          ))}
+        </div>
+      </Dialog>
+
       <Footer />
     </>
   );

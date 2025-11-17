@@ -8,7 +8,7 @@ export interface IResponse {
   status?: number;
   success?: boolean;
   message?: string;
-  data?: object
+  data?: any
 }
 
 export interface IUserLogin {
@@ -76,13 +76,32 @@ export interface ICartItem {
   quantity: number;
 }
 
+export interface IOrderItem {
+  product: { id: number };
+  quantity: number;
+}
+
 export interface IOrder {
-  items: ICartItem[];
-  total: number;
+  id?: number;
+  address?: { id: number };
+  items: ICartItem[] | IOrderItem[];
+  total?: number;
+  status?: string;
+  createdAt?: string;
 }
 
 export interface IOrderResponse {
   success: boolean;
   message: string;
   data?: IOrder;
+}
+
+export interface IAddress {
+  id?: number;
+  street: string;
+  number: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
 }

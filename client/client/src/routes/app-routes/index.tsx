@@ -7,6 +7,9 @@ import ProductListingPage from '../../pages/ProductListingPage/index';
 import CartPage from '../../pages/CartPage/index';
 import { RequireAuth } from '../../components/require-auth';
 import { PublicOnlyRoute } from '../../components/public-only-route';
+import AccountPage from '../../pages/AccountPage/index';
+import AddressPage from '../../pages/AddressPage/index';
+import OrdersPage from '../../pages/OrdersPage/index';
 
 export const AppRoutes = () => {
   return (
@@ -25,7 +28,9 @@ export const AppRoutes = () => {
 
       {/* Protected routes for logged-in users */}
       <Route element={<RequireAuth />}>
-        {/* Other protected pages can be added here */}
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/addresses" element={<AddressPage />} />
+        <Route path="/orders" element={<OrdersPage />} />
       </Route>
     </Routes>
   );

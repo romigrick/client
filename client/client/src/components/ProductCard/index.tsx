@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCart } from '../../context/hooks/use-cart';
 import type { IProduct } from '../../commons/types';
 
 interface ProductCardProps {
@@ -23,7 +24,7 @@ const productCardStyle: React.CSSProperties = {
 const productImageContainerStyle: React.CSSProperties = {
   position: 'relative',
   width: '100%',
-  height: '200px',
+  height: '120px',
   overflow: 'hidden',
   borderRadius: '4px',
 };
@@ -106,6 +107,8 @@ const reviewCountStyle: React.CSSProperties = {
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { addToCart } = useCart();
+
   // Função para renderizar estrelas de avaliação
   const renderStars = (rating: number, reviewCount: number) => {
     let stars = [];
@@ -131,6 +134,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       style: 'currency',
       currency: 'BRL'
     }).format(price);
+  };
+
+  // Função para adicionar ao carrinho
+  const handleAddToCart = () => {
+    addToCart(product);
   };
 
   // URL da imagem do produto
@@ -162,6 +170,23 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </p>
         <p style={installmentsStyle}>ou 10x de {formatPrice(product.price / 10)}</p>
       </div>
+
+      <button
+        onClick={handleAddToCart}
+        style={{
+          backgroundColor: '#ff6600',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          padding: '8px 16px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          marginTop: '8px'
+        }}
+      >
+        Adicionar ao Carrinho
+      </button>
     </div>
   );
 }
