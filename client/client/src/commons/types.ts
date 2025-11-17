@@ -70,3 +70,19 @@ export interface FilterSidebarProps {
 export interface ListingProductCardProps {
   product: IProduct;
 }
+
+export interface ICartItem {
+  product: IProduct;
+  quantity: number;
+}
+
+export interface IOrder {
+  items: ICartItem[];
+  total: number;
+}
+
+export interface IOrderResponse {
+  success: boolean;
+  message: string;
+  data?: IOrder;
+}

@@ -422,7 +422,7 @@ const Header = () => {
               <a href="#" style={actionIconStyle}><i className="pi pi-star" /></a>
               <a href="#" style={actionIconStyle}><i className="pi pi-bell" /></a>
               <a href="#" style={actionIconStyle}><i className="pi pi-heart" /></a>
-              <a href="#" style={cartIconStyle}><i className="pi pi-shopping-cart" /></a>
+              <a href="/cart" style={cartIconStyle}><i className="pi pi-shopping-cart" /></a>
             </div>
             <AuthDisplay />
           </div>
